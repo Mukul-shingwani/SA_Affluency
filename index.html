@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SA Affluency Maps</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        #map-container {
+            width: 90%;
+            height: 600px;
+            margin: auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background: white;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Select Metric to Display</h2>
+    <select id="metricSelector" onchange="updateMap()">
+        <option value="map_asp.html">ASP</option>
+        <option value="map_Salary_day_Spike.html">Salary Day Spike</option>
+        <option value="map_BNPL.html">BNPL</option>
+        <option value="map_Tier_C_CC.html">Tier C Credit Card</option>
+        <option value="map_Non_Premium_Devices.html">Non-Premium Devices</option>
+        <option value="map_Final_Score_V2.html">Overall score</option>
+    </select>
+
+    <div id="map-container">
+        <iframe id="mapFrame" src="map_asp.html"></iframe>
+    </div>
+
+    <script>
+        function updateMap() {
+            var selectedMetric = document.getElementById("metricSelector").value;
+            document.getElementById("mapFrame").src = selectedMetric;
+        }
+    </script>
+
+</body>
+</html>
