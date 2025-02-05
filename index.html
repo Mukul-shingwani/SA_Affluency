@@ -5,32 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SA Affluency Maps</title>
     <style>
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            background: linear-gradient(to bottom, #FFC72C, #FFF8E1);
+            color: #333;
+            margin: 0;
+            padding: 0;
         }
-        #map-container {
-            width: 90%;
-            height: 600px;
-            margin: auto;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            background: white;
-            display: none; /* Initially hidden */
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        select {
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+
+        /* Password Page Styling */
         #password-container {
             display: flex;
             flex-direction: column;
@@ -38,21 +23,109 @@
             align-items: center;
             height: 100vh;
         }
-        #password-container input {
-            padding: 10px;
+        .password-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 350px;
+        }
+        .password-box img {
+            width: 120px; /* Noon Logo */
+            margin-bottom: 15px;
+        }
+        .password-box h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .password-box input {
+            width: 100%; 
+            padding: 12px;
             font-size: 16px;
             margin-bottom: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
             border: 1px solid #ccc;
+            box-sizing: border-box; 
         }
-        #password-container button {
-            padding: 10px 20px;
+
+        .password-box button {
+            width: 100%;
+            padding: 12px;
             font-size: 16px;
             border: none;
-            background-color: #007BFF;
+            background-color: #1A237E;
             color: white;
-            border-radius: 5px;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
+            transition: 0.3s;
+        }
+        .password-box button:hover {
+            background-color: #303F9F;
+        }
+        .error-message {
+            color: red;
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* Map & Dropdown Styling */
+        #map-content {
+            display: none;
+            padding: 20px;
+        }
+        .header {
+            background: #1A237E;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header img {
+            width: 120px;
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1A237E;
+        }
+        select {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            width: 250px;
+            font-weight: bold;
+            color: #1A237E;
+        }
+        select:hover {
+            border-color: #FFC72C;
+        }
+        
+        /* Map Container */
+        #map-container {
+            width: 95%;
+            height: 600px;
+            margin: auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background: white;
+            display: none;
+            border: 5px solid #1A237E;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -60,14 +133,20 @@
 
     <!-- Password Prompt -->
     <div id="password-container">
-        <h2>Enter Password to Access Maps</h2>
-        <input type="password" id="passwordInput" placeholder="Enter Password">
-        <button onclick="checkPassword()">Submit</button>
-        <p id="errorMessage" style="color: red; display: none;">Incorrect password. Try again.</p>
+        <div class="password-box">
+            <img src="noon_logo.png" alt="Noon Logo">  <!-- Add the Noon Logo -->
+            <h2>Enter Password to Access Maps</h2>
+            <input type="password" id="passwordInput" placeholder="Enter Password">
+            <button onclick="checkPassword()">Submit</button>
+            <p class="error-message" id="errorMessage">Incorrect password. Try again.</p>
+        </div>
     </div>
 
     <!-- Main Content (Hidden Until Correct Password) -->
-    <div id="map-content" style="display: none;">
+    <div id="map-content">
+        <div class="header">
+            <img src="noon_logo.png" alt="Noon Logo">
+        </div>
         <h2>Select Metric to Display</h2>
         <select id="metricSelector" onchange="updateMap()">
             <option value="new_map_Final_Score_V2.html">Overall score</option>
@@ -95,7 +174,7 @@
         async function checkPassword() {
             var enteredPassword = document.getElementById("passwordInput").value;
 
-            const storedPasswordHash = "7bc48771c074cb2393ee2d796475869ca8be8f76f675a21f7e37f187115cf32d";
+            const storedPasswordHash = "7bc48771c074cb2393ee2d796475869ca8be8f76f675a21f7e37f187115cf32d"; 
 
             const enteredPasswordHash = await hashPassword(enteredPassword);
 
