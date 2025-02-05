@@ -17,6 +17,7 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             background: white;
+            display: none; /* Initially hidden */
         }
         iframe {
             width: 100%;
@@ -30,25 +31,84 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
+        #password-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #password-container input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #password-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <h2>Select Metric to Display</h2>
-    <select id="metricSelector" onchange="updateMap()">
-        <option value="new_map_Final_Score_V2.html">Overall score</option>
-        <option value="new_map_asp.html">ASP</option>
-        <option value="new_map_Salary_day_Spike.html">Salary Day Spike</option>
-        <option value="new_map_BNPL.html">BNPL</option>
-        <option value="new_map_Tier_C_CC.html">Tier C Credit Card</option>
-        <option value="new_map_Non_Premium_Devices.html">Non-Premium Devices</option>
-    </select>
+    <!-- Password Prompt -->
+    <div id="password-container">
+        <h2>Enter Password to Access Maps</h2>
+        <input type="password" id="passwordInput" placeholder="Enter Password">
+        <button onclick="checkPassword()">Submit</button>
+        <p id="errorMessage" style="color: red; display: none;">Incorrect password. Try again.</p>
+    </div>
 
-    <div id="map-container">
-        <iframe id="mapFrame" src="new_map_Final_Score_V2.html"></iframe>
+    <!-- Main Content (Hidden Until Correct Password) -->
+    <div id="map-content" style="display: none;">
+        <h2>Select Metric to Display</h2>
+        <select id="metricSelector" onchange="updateMap()">
+            <option value="new_map_Final_Score_V2.html">Overall score</option>
+            <option value="new_map_asp.html">ASP</option>
+            <option value="new_map_Salary_day_Spike.html">Salary Day Spike</option>
+            <option value="new_map_BNPL.html">BNPL</option>
+            <option value="new_map_Tier_C_CC.html">Tier C Credit Card</option>
+            <option value="new_map_Non_Premium_Devices.html">Non-Premium Devices</option>
+        </select>
+
+        <div id="map-container">
+            <iframe id="mapFrame"></iframe>
+        </div>
     </div>
 
     <script>
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function checkPassword() {
+            var enteredPassword = document.getElementById("passwordInput").value;
+
+            const storedPasswordHash = "7bc48771c074cb2393ee2d796475869ca8be8f76f675a21f7e37f187115cf32d";
+
+            const enteredPasswordHash = await hashPassword(enteredPassword);
+
+            if (enteredPasswordHash === storedPasswordHash) {
+                document.getElementById("password-container").style.display = "none";
+                document.getElementById("map-content").style.display = "block";
+                document.getElementById("map-container").style.display = "block";
+                document.getElementById("mapFrame").src = document.getElementById("metricSelector").value;
+            } else {
+                document.getElementById("errorMessage").style.display = "block";
+            }
+        }
+
         function updateMap() {
             var selectedMetric = document.getElementById("metricSelector").value;
             document.getElementById("mapFrame").src = selectedMetric;
