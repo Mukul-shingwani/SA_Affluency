@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SA Affluency Maps</title>
+    <title>KSA Polygon Affluency Maps</title>
     <style>
         /* General Styles */
         body {
@@ -32,7 +32,7 @@
             width: 350px;
         }
         .password-box img {
-            width: 120px; /* Noon Logo */
+            width: 120px;
             margin-bottom: 15px;
         }
         .password-box h2 {
@@ -41,15 +41,14 @@
             font-weight: bold;
         }
         .password-box input {
-            width: 100%; 
+            width: 100%;
             padding: 12px;
             font-size: 16px;
             margin-bottom: 10px;
             border-radius: 8px;
             border: 1px solid #ccc;
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
-
         .password-box button {
             width: 100%;
             padding: 12px;
@@ -77,22 +76,53 @@
             display: none;
             padding: 20px;
         }
+
+        /* New Header */
         .header {
-            background: #1A237E;
-            padding: 15px;
+            color: #1A237E;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        /* Updated Header */
+        .header {
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(to bottom, #FFC72C, #FFF8E1);
+            padding: 20px;
+            position: relative;
         }
-        .header img {
-            width: 120px;
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0;
+            color: #1A237E;
+            text-align: center;
+            flex-grow: 1;
         }
+
+        /* Logo Container */
+        .logo-container {
+            position: absolute;
+            right: 20px;
+        }
+
+        .logo-container img {
+            width: 100px;
+            height: 73px;
+        }
+
+
         h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             margin-bottom: 15px;
             color: #1A237E;
         }
+
         select {
             padding: 12px;
             font-size: 16px;
@@ -109,7 +139,7 @@
         select:hover {
             border-color: #FFC72C;
         }
-        
+
         /* Map Container */
         #map-container {
             width: 95%;
@@ -134,7 +164,7 @@
     <!-- Password Prompt -->
     <div id="password-container">
         <div class="password-box">
-            <img src="noon_logo.png" alt="Noon Logo">  <!-- Add the Noon Logo -->
+            <img src="noon_logo.png" alt="Noon Logo">
             <h2>Enter Password to Access Maps</h2>
             <input type="password" id="passwordInput" placeholder="Enter Password">
             <button onclick="checkPassword()">Submit</button>
@@ -144,17 +174,33 @@
 
     <!-- Main Content (Hidden Until Correct Password) -->
     <div id="map-content">
+        <!-- Updated Header -->
+        <!-- Updated Header -->
         <div class="header">
-            <img src="noon_logo.png" alt="Noon Logo">
+            <h1>KSA Polygon Level Affluence (Indexed Data)</h1>
+            <div class="logo-container">
+                <img src="noon_logo.png" alt="Noon Logo">
+            </div>
         </div>
-        <h2>Select Metric to Display</h2>
+
+
+        <h2>Select City & Metric to Display</h2>
+
+        <!-- City Dropdown -->
+        <select id="citySelector" onchange="updateMap(true)">
+            <option value="Riyadh">Riyadh</option>
+            <option value="Jeddah">Jeddah</option>
+            <option value="Dhahran">Dhahran</option>
+        </select>        
+
+        <!-- Metric Dropdown -->
         <select id="metricSelector" onchange="updateMap()">
-            <option value="new_map_Final_Score_V2.html">Overall score</option>
-            <option value="new_map_asp.html">ASP</option>
-            <option value="new_map_Salary_day_Spike.html">Salary Day Spike</option>
-            <option value="new_map_BNPL.html">BNPL</option>
-            <option value="new_map_Tier_C_CC.html">Tier C Credit Card</option>
-            <option value="new_map_Non_Premium_Devices.html">Non-Premium Devices</option>
+            <option value="Final_Score_V2">Overall score</option>
+            <option value="asp">ASP</option>
+            <option value="Salary_day_Spike">Salary Day Spike</option>
+            <option value="BNPL">BNPL</option>
+            <option value="Tier_C_CC">Tier C Credit Card</option>
+            <option value="Non_Premium_Devices">Non-Premium Devices</option>
         </select>
 
         <div id="map-container">
@@ -173,7 +219,6 @@
 
         async function checkPassword() {
             var enteredPassword = document.getElementById("passwordInput").value;
-
             const storedPasswordHash = "7bc48771c074cb2393ee2d796475869ca8be8f76f675a21f7e37f187115cf32d"; 
 
             const enteredPasswordHash = await hashPassword(enteredPassword);
@@ -182,16 +227,30 @@
                 document.getElementById("password-container").style.display = "none";
                 document.getElementById("map-content").style.display = "block";
                 document.getElementById("map-container").style.display = "block";
-                document.getElementById("mapFrame").src = document.getElementById("metricSelector").value;
+                updateMap(); 
             } else {
                 document.getElementById("errorMessage").style.display = "block";
             }
         }
 
-        function updateMap() {
-            var selectedMetric = document.getElementById("metricSelector").value;
-            document.getElementById("mapFrame").src = selectedMetric;
+        function updateMap(cityChanged = false) {
+            var selectedCity = document.getElementById("citySelector").value;
+            var metricDropdown = document.getElementById("metricSelector");
+
+            // If city is changed, reset metric to "Final_Score_V2"
+            if (cityChanged) {
+                metricDropdown.value = "Final_Score_V2";  
+            }
+
+            var selectedMetric = metricDropdown.value;
+            var mapFile = `new_map_${selectedCity}_${selectedMetric}.html`;
+
+            console.log("Loading Map File:", mapFile);  // Debugging Log
+
+            document.getElementById("mapFrame").src = mapFile;
         }
+
+
     </script>
 
 </body>
